@@ -5,8 +5,6 @@ import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 import { ExpirationPlugin } from 'workbox-expiration';
 
 
-let cacheName = "capivarias";
-let filesTochache = ["/", "/index.html", "/css/style.css", "/js/main.js", "/js/db.js"];
 
 // configurando o cache
 const pageCache = new CacheFirst({
@@ -21,28 +19,12 @@ const pageCache = new CacheFirst({
   ],
 });
 
-
-self.addEventListener("install", (e) => {
-  e.waitUntil(
-    caches.open(cacheName).then(function (cache){
-      return cache.addAll(filesTochache);
-    })
-  );
-});
-
-self.addEventListener("fetch", (e) => {
-  e.respondWith(
-    caches.match(e.request).then((response) =>{
-      return response || fetch(e.request);
-    })
-  )
-})
-
 //indicando o cache de página
 warmStrategyCache({
   urls: ['/index.html', '/'],
   strategy: pageCache,
 });
+
 //registrando a rota
 registerRoute(({ request }) => request.mode === 'navigate', pageCache);
 
@@ -59,6 +41,11 @@ registerRoute(
   }),
 );
 
+// configurando offline fallback
+offlineFallback({
+  pageFallback: '/offline.html',
+});
+
 const imageRoute = new Route(({ request }) => {
   return request.destination === 'image';
 }, new CacheFirst({
@@ -71,4 +58,3 @@ const imageRoute = new Route(({ request }) => {
 }));
 
 registerRoute(imageRoute);
-
