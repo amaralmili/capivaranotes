@@ -30,18 +30,16 @@ window.addEventListener('DOMContentLoaded', async event =>{
     criarDB();
     document.getElementById('btnCadastro').addEventListener('click', adicionarAnotacao);
     document.getElementById('btnCarregar').addEventListener('click', buscarTodasAnotacoes);
-    document.getElementById('btnBuscar').addEventListener('click', buscarAnotacao)
+    document.getElementById('btnBuscar').addEventListener('click', buscarAnotacao);
+    document.getElementById('btnRemover').addEventListener('click', removerAnotacao);
 });
 
 async function buscarAnotacao() {
     let busca = document.getElementById("busca").value;
-
     const tx = await db.transaction('anotacao', 'readonly');
     const store = tx.objectStore('anotacao');
-    
     const index = store.index('titulo');
     const anotacoes = await index.getAll(IDBKeyRange.only(busca));
-
     if (anotacoes.length > 0) {
         const divLista = anotacoes.map(anotacao => {
             return `<div class="item">
@@ -94,6 +92,25 @@ async function adicionarAnotacao() {
         console.log('Registro adicionado com sucesso!');
     } catch (error) {
         console.error('Erro ao adicionar registro:', error);
+        tx.abort();
+    }
+}
+
+async function removerAnotacao() {
+    const tituloParaRemover = prompt('Digite o título da anotação que deseja remover:');
+    if (!tituloParaRemover) {
+        console.log('Operação de remoção cancelada.');
+        return;
+    }
+    const tx = await db.transaction('anotacao', 'readwrite');
+    const store = tx.objectStore('anotacao');
+    try {
+        await store.delete(tituloParaRemover);
+        await tx.done;
+        console.log('Anotação removida com sucesso!');
+        buscarTodasAnotacoes(); 
+    } catch (error) {
+        console.error('Erro ao remover a anotação:', error);
         tx.abort();
     }
 }
