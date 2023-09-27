@@ -3,7 +3,7 @@ import { openDB } from "idb";
 let db;
 async function criarDB(){
     try {
-        db = await openDB('banco', 1, {
+        db = await openDB('banco', 2, {
             upgrade(db, oldVersion, newVersion, transaction){
                 switch  (oldVersion) {
                     case 0:
@@ -13,6 +13,10 @@ async function criarDB(){
                         });
                         store.createIndex('id', 'id');
                         console.log("banco de dados criado!");
+                }
+                if (oldVersion < 2) {
+                    const store = transaction.objectStore('anotacao');
+                    store.createIndex('titulo', 'titulo', { unique: false });
                 }
             }
         });
@@ -26,7 +30,34 @@ window.addEventListener('DOMContentLoaded', async event =>{
     criarDB();
     document.getElementById('btnCadastro').addEventListener('click', adicionarAnotacao);
     document.getElementById('btnCarregar').addEventListener('click', buscarTodasAnotacoes);
+    document.getElementById('btnBuscar').addEventListener('click', buscarAnotacao)
 });
+
+async function buscarAnotacao() {
+    let busca = document.getElementById("busca").value;
+
+    const tx = await db.transaction('anotacao', 'readonly');
+    const store = tx.objectStore('anotacao');
+    
+    const index = store.index('titulo');
+    const anotacoes = await index.getAll(IDBKeyRange.only(busca));
+
+    if (anotacoes.length > 0) {
+        const divLista = anotacoes.map(anotacao => {
+            return `<div class="item">
+                <p>Anotação</p>
+                <p>Título: ${anotacao.titulo}</p>
+                <p>Descrição: ${anotacao.descricao}</p>
+                <p>Data: ${anotacao.data}</p>
+                <p>Categoria: ${anotacao.categoria}</p>
+            </div>`;
+        });
+        listagem(divLista.join(' '));
+    } else {
+        listagem('<p>Nenhuma anotação encontrada com o título especificado.</p>');
+    }
+}
+
 
 async function buscarTodasAnotacoes(){
     if(db == undefined){
