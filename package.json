@@ -3,14 +3,19 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "main": "index.html",
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "serve .",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
+  "author": "Jamili e Yasmim",
   "devDependencies": {
-    "vite": "^4.4.5",
     "idb": "7.1.1",
+    "serve": "^13.0.4",
+    "vite": "^4.4.5",
     "workbox-cacheable-response": "7.0.0",
     "workbox-expiration": "7.0.0",
     "workbox-recipes": "7.0.0",

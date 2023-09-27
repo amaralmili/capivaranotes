@@ -4,6 +4,31 @@ import { registerRoute, Route } from 'workbox-routing';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 import { ExpirationPlugin } from 'workbox-expiration';
 
+
+let cacheName = "capivarias";
+let filesTochache = ["/", "/index.html", "/css/style.css", "/js/main.js", "/js/db.js"];
+
+self.addEventListener("install", (e) => {
+  e.waitUntil(
+    caches.open(cacheName).then(function (cache){
+      return cache.addAll(filesTochache);
+    })
+  );
+});
+
+self.addEventListener("fetch", (e) => {
+  e.respondWith(
+    caches.match(e.request).then((response) =>{
+      return response || fetch(e.request);
+    })
+  )
+})
+
+
+
+
+
+
 // configurando o cache
 const pageCache = new CacheFirst({
   cacheName: 'capivara-cache',
