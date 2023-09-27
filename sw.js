@@ -5,8 +5,8 @@ import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 import { ExpirationPlugin } from 'workbox-expiration';
 
 
-let cacheName = "capivarias";
-let filesTochache = ["/", "/index.html", "/css/style.css", "/js/main.js", "/js/db.js"];
+
+
 
 self.addEventListener("install", (e) => {
   e.waitUntil(
@@ -23,11 +23,6 @@ self.addEventListener("fetch", (e) => {
     })
   )
 })
-
-
-
-
-
 
 // configurando o cache
 const pageCache = new CacheFirst({
