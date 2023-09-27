@@ -14,7 +14,7 @@
   "author": "Jamili e Yasmim",
   "devDependencies": {
     "idb": "7.1.1",
-    "serve": "^13.0.4",
+    "serve": "^14.2.1",
     "vite": "^4.4.5",
     "workbox-cacheable-response": "7.0.0",
     "workbox-expiration": "7.0.0",
