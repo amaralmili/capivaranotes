@@ -6,7 +6,7 @@ async function criarDB(){
         db = await openDB('banco', 2, {
             upgrade(db, oldVersion, newVersion, transaction){
                 switch  (oldVersion) {
-                    case 0:
+                    case 0://cria um objeto de armazenamento chamado anotação
                     case 1:
                         const store = db.createObjectStore('anotacao', {
                             keyPath: 'titulo'
@@ -14,9 +14,9 @@ async function criarDB(){
                         store.createIndex('id', 'id');
                         console.log("banco de dados criado!");
                 }
-                if (oldVersion < 2) {
+                if (oldVersion < 2) {//versao antiga
                     const store = transaction.objectStore('anotacao');
-                    store.createIndex('titulo', 'titulo', { unique: false });
+                    store.createIndex('titulo', 'titulo', { unique: false });//indica que os titulos n precisam ser unicos
                 }
             }
         });
@@ -36,12 +36,12 @@ window.addEventListener('DOMContentLoaded', async event =>{
 });
 
 async function buscarAnotacao() {
-    let busca = document.getElementById("busca").value;
-    const tx = await db.transaction('anotacao', 'readonly');
-    const store = tx.objectStore('anotacao');
-    const index = store.index('titulo');
-    const anotacoes = await index.getAll(IDBKeyRange.only(busca));
-    if (anotacoes.length > 0) {
+    let busca = document.getElementById("busca").value;//obtem o valor com ID busca
+    const tx = await db.transaction('anotacao', 'readonly');//transição de leitura, objeto vinculado ao armazenamento chamado "anotação"
+    const store = tx.objectStore('anotacao');//objeto de armazenamento
+    const index = store.index('titulo');//a pesquisa sera feita com base nos titulos
+    const anotacoes = await index.getAll(IDBKeyRange.only(busca));//usa para buscar todos os titulos correspondentes
+    if (anotacoes.length > 0) {//gera as anotações encontradas
         const divLista = anotacoes.map(anotacao => {
             return `<div class="item">
                 <p>Anotação</p>
@@ -51,21 +51,21 @@ async function buscarAnotacao() {
                 <p>Categoria: ${anotacao.categoria}</p>
             </div>`;
         });
-        listagem(divLista.join(' '));
+        listagem(divLista.join(' '));//todas as anotações encontradas são unidas em uma string usando o join
     } else {
-        listagem('<p>Nenhuma anotação encontrada com o título especificado.</p>');
+        listagem('<p>Nenhuma anotação encontrada com o título especificado.</p>');//se não encontrar
     }
 }
 
 
 async function buscarTodasAnotacoes(){
-    if(db == undefined){
-        console.log("O banco de dados está fechado.");
+    if(db == undefined){//verifica se é indefinida
+        console.log("O banco de dados está fechado.");//se for indefinido
     }
-    const tx = await db.transaction('anotacao', 'readonly');
-    const store = await tx.objectStore('anotacao');
-    const anotacoes = await store.getAll();
-    if(anotacoes){
+    const tx = await db.transaction('anotacao', 'readonly');//inicia uma transição de leitura no db
+    const store = await tx.objectStore('anotacao');//objeto de armazenamento
+    const anotacoes = await store.getAll();//obtem todas as anotações
+    if(anotacoes){//verifica se anotações existe
         const divLista = anotacoes.map(anotacao => {
             return `<div class="item">
                     <p>Anotação</p>
@@ -80,12 +80,12 @@ async function buscarTodasAnotacoes(){
 }
 
 async function adicionarAnotacao() {
-    let titulo = document.getElementById("titulo").value;
+    let titulo = document.getElementById("titulo").value;//obtem valor do titulo
     let descricao = document.getElementById("descricao").value;
     let data = document.getElementById("data").value;
     let categoria = document.getElementById("categoria").value;
 
-    if (!titulo || !descricao || !data) {
+    if (!titulo || !descricao || !data) {//verifica se os campos obrigatorios estao preenchidos 
         console.log('Preencha todos os campos obrigatórios (Título, Descrição e Data).');
         return;
     }
@@ -93,9 +93,9 @@ async function adicionarAnotacao() {
     const tx = await db.transaction('anotacao', 'readwrite')
     const store = tx.objectStore('anotacao');
     try {
-        await store.add({ titulo: titulo, descricao: descricao, data: data, categoria: categoria });
-        await tx.done;
-        limparCampos();
+        await store.add({ titulo: titulo, descricao: descricao, data: data, categoria: categoria }); //adiciona uma nova anotação
+        await tx.done;//aguarda a conclusao
+        limparCampos();//para limpar os campos do formulario
         console.log('Registro adicionado com sucesso!');
     } catch (error) {
         console.error('Erro ao adicionar registro:', error);
@@ -105,22 +105,24 @@ async function adicionarAnotacao() {
 
 async function removerAnotacao() {
     const tituloParaRemover = prompt('Digite o título da anotação que deseja remover:');
-    if (!tituloParaRemover) {
+    if (!tituloParaRemover) {//se o usuario cancelou a operação
         console.log('Operação de remoção cancelada.');
         return;
     }
     const tx = await db.transaction('anotacao', 'readwrite');
     const store = tx.objectStore('anotacao');
     try {
-        await store.delete(tituloParaRemover);
-        await tx.done;
+        await store.delete(tituloParaRemover);//remove a anotação 
+        await tx.done;//aguarda a conclusao
         console.log('Anotação removida com sucesso!');
-        buscarTodasAnotacoes(); 
+        buscarTodasAnotacoes();//atualiza as anotações para refletir a remoção
     } catch (error) {
         console.error('Erro ao remover a anotação:', error);
-        tx.abort();
+        tx.abort();//evita que as alterações se apliquem ao bd
     }
 }
+
+
 async function atualizarAnotacao() {
     const tituloParaAtualizar = prompt('Digite o título da anotação que deseja atualizar:');
     if (!tituloParaAtualizar) {
@@ -177,6 +179,7 @@ async function atualizarAnotacao() {
 }
 
 
+//limpa os campos e da um valor vazio
 function limparCampos() {
     document.getElementById("titulo").value = '';
     document.getElementById("descricao").value = '';

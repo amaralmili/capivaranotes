@@ -20,13 +20,21 @@
     <div class="container">
         <h1 class="title">Minhas Anotações</h1>
         <div style="text-align: center;">
-            <img src="/images/capibaraNotes.png" alt="pwa" width="256" height="256">
+            <img src="/images/cadernin.png" alt="pwa" width="256" height="256">
         </div>
         <div id="entrada">
-            <input required type="text" id="titulo" placeholder="Titulo">
-            <textarea required id="descricao" cols="30" rows="10" placeholder="Descrição"></textarea>
-            <input required type="date" id="data">
-            <select required id="categoria">
+            
+<div class="inputs">
+            <label>Título</label>
+            <input type="text" id="titulo" placeholder="Digite o titulo">
+            
+            <label>Descrição</label>
+            <textarea  id="descricao" cols="30" rows="10" placeholder="Digite a descrição"></textarea>
+            
+            <input type="date" id="data">
+</div>
+            <select  id="categoria">
+                <option value="selecione">Selecione</option>
                 <option value="trabalho">Trabalho</option>
                 <option value="estudos">Estudos</option>
                 <option value="pessoal">Pessoal</option>
@@ -35,8 +43,10 @@
                 <option value="formula 1">Formula 1</option>
              </select>
 
-            <input type="text" id="busca" placeholder="Buscar anatação">
+            <input type="text" id="busca" placeholder="Buscar anotação">
+            
             <button id="btnBuscar">Buscar Anotação</button>
+            <br/>
             <button id="btnCadastro">Cadastrar</button>
             <button id="btnCarregar">Carregar minhas Anotações</button>
             <button id="btnRemover">Remover uma Anotação</button>
