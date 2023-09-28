@@ -7,14 +7,15 @@ import { ExpirationPlugin } from 'workbox-expiration';
 
 
 // configurando o cache
-const pageCache = new CacheFirst({
+const pageCache = new CacheFirst({//Ele da prioridade ao cache antes de solicitar algo
   cacheName: 'capivara-cache',
   plugins: [
     new CacheableResponsePlugin({
-      statuses: [0, 200],
-    }),
+      statuses: [0, 200],//configura para armazenar em cache as respostas com codigo 0
+    }),                  //sendo a 0 a falha e a 200 a bem-sucedida 
+    
     new ExpirationPlugin({
-      maxAgeSeconds: 30 * 24 * 60 * 60,
+      maxAgeSeconds: 30 * 24 * 60 * 60,//periodo de expiração para itens armazenados
     }),
   ],
 });
