@@ -151,4 +151,9 @@ img {
     outline: none;
     box-sizing: border-box;
     margin-top: 10px;
+    color: grey;
+}
+
+#data{
+  color: grey;
 }
